@@ -1,22 +1,20 @@
 import mongoose from "mongoose";
-
-
-
-const cmreactSchema = new mongoose.Schema({
+const { ObjectId } = mongoose.Schema;
+const reactSchema = new mongoose.Schema({
   react: {
     type: String,
     enum: ["like", "love", "haha", "sad", "angry", "wow"],
     required: true,
   },
   postRef: {
-    type: mongoose.Schema.ObjectId,
+    type: ObjectId,
     ref: "comment",
   },
   reactBy: {
-    type: mongoose.Schema.ObjectId,
+    type:ObjectId,
     ref: "user",
   },
 });
 
-const commentReactModel = mongoose.model("commentReact", cmreactSchema);
-export default commentReactModel;
+const postReactCommentModel = mongoose.model("ReactComment", reactSchema);
+export default postReactCommentModel;

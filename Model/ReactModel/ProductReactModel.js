@@ -1,6 +1,6 @@
 import mongoose from"mongoose"
 
-const { ObjectId } = mongoose.Schema;
+
 
 const reactSchema = new mongoose.Schema({
   react: {
@@ -9,11 +9,11 @@ const reactSchema = new mongoose.Schema({
     required: true,
   },
   postRef: {
-    type: ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: "product",
   },
   reactBy: {
-    type: ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: "user",
   },
 });

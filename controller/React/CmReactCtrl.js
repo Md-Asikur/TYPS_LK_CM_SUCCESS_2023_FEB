@@ -1,5 +1,5 @@
 import  mongoose  from"mongoose"
-import CmReactModel from"../../Model/ReactModel/CmReactModel.js"
+import CmReactModel from "../../Model/ReactModel/CmReactModel.js";
 
 import userModel from"../../Model/UserModel.js"
 
@@ -8,13 +8,13 @@ export const reactPostComment = async (req, res) => {
     const { postId, react,userId } = req.body;
     const check = await CmReactModel.findOne({
       postRef: postId,
-      reactBy: userId,
+      reactBy: mongoose.Types.ObjectId(req.user.id),
     });
     if (check == null) {
       const newReact = new CmReactModel({
         react: react,
         postRef: postId,
-        reactBy: userId,
+        reactBy: req.user.id,
       });
       await newReact.save();
     } else {

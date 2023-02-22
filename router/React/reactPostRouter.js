@@ -3,6 +3,6 @@ import { reactPost, getReacts, getReactsUnauth } from "../../controller/React/Po
 import { isAuthenticatedUser } from "../../utils/auth.js"
 const router = express.Router()
 router.put("/react-post", isAuthenticatedUser, reactPost)
-router.get("/get-react-post/:id", isAuthenticatedUser, getReacts);
-router.get("/get-react-post-unauth/:id", getReactsUnauth);
-export default  router;
+router.get("/get-react-post/:id([0-9a-fA-F]{24})", isAuthenticatedUser, getReacts);
+router.get("/get-react-post-unauth/:id([0-9a-fA-F]{24})", getReactsUnauth);
+export default router;

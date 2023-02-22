@@ -25,9 +25,9 @@ export const getPostReactsUnauth = async (postId) => {
   }
 };
 //react comments
-export const reactComment = async (postId, react,userId,) => {
+export const reactComment = async (postId, react) => {
   try {
-    const { data } = await axios.put(`/api/v1/react-comment`, { postId, react, userId });
+    const { data } = await axios.put(`/api/v1/react-comment`, { postId, react });
     return "ok";
   } catch (error) {
     return error.response.data.message;
@@ -38,7 +38,7 @@ export const getCommentReacts = async (postId, token) => {
     const { data } = await axios.get(`/api/v1/get-react-comment/${postId}`);
     return data;
   } catch (error) {
-    return error.response.data.message;
+    return error.response.data.message
   }
 };
 export const getCommentReactsUnAuth = async (postId, token) => {

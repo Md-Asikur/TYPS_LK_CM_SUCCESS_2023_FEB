@@ -22,7 +22,7 @@ const AvatarReply= ({ user, reply_user }) => {
         </small>
 
         <small className="reply-text">
-          Reply to <Link to={`/profile/${reply_user?._id}`}>
+          Reply to <Link to={`/account/${reply_user?._id}`}>
             { reply_user?.name }
           </Link>
         </small>

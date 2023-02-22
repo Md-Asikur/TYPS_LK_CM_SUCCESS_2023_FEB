@@ -57,12 +57,13 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
    
     setReacts(res.reacts);
     //setCheck(res.check);
-    setTotal(res.total);
+    setTotal(res.total)
    
   };
 
   const reactHandler = async (type) => {
-    reactComment(comment._id, type,user?._id);
+    console.log("this",comment?._id);
+    reactComment(comment._id, type);
     if (check == type) {
       setCheck();
       let index = reacts?.findIndex((x) => x.react == check);
