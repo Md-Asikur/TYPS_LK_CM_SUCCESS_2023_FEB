@@ -1,0 +1,12 @@
+.account{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 10px;
+}
+.account>div>img{
+    padding: 20px 10px;
+    height: 400px;
+    width: 300px;
+}
