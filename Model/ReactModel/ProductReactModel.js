@@ -10,11 +10,11 @@ const reactSchema = new mongoose.Schema({
   },
   postRef: {
     type: ObjectId,
-    ref: "Product",
+    ref: "product",
   },
   reactBy: {
     type: ObjectId,
-    ref: "User",
+    ref: "user",
   },
 });
 
