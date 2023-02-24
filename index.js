@@ -24,7 +24,12 @@ app.use(express.json());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false}));
 app.use(fileupload())
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({
+    origin: "http://localhost:3000" || "https://sore-hare-cloak.cyclic.app",
+    credentials: true,
+  })
+);
 app.use(cookieparser())
 
 app.use("/api/v1", userRouter);
