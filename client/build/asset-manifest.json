@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.4bead4cb.css",
-    "main.js": "/static/js/main.fb25401d.js",
+    "main.js": "/static/js/main.688f05d3.js",
     "static/media/bg.jpg": "/static/media/bg.09df21737170f1026ac6.jpg",
     "index.html": "/index.html",
     "main.4bead4cb.css.map": "/static/css/main.4bead4cb.css.map",
-    "main.fb25401d.js.map": "/static/js/main.fb25401d.js.map"
+    "main.688f05d3.js.map": "/static/js/main.688f05d3.js.map"
   },
   "entrypoints": [
     "static/css/main.4bead4cb.css",
-    "static/js/main.fb25401d.js"
+    "static/js/main.688f05d3.js"
   ]
 }
