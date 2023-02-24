@@ -10,6 +10,8 @@ import categoryRouter from "./router/categoryRouter.js";
 import commentRouter from "./router/commentRouter.js";
 import postReactRouter from "./router/React/reactPostRouter.js";
 import commentReactRouter from "./router/React/reactCmRouter.js";
+import conversationsRouter from "./router/message/conversation.route.js";
+import messageRouter from "./router/message/message.route.js";
 
 import { error } from "./utils/error.js";
 import path from "path";
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false}));
 app.use(fileupload())
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(cookieparser())
 
 app.use("/api/v1", userRouter);
@@ -30,6 +33,8 @@ app.use("/api/v1", categoryRouter);
 app.use("/api/v1", commentRouter);
 app.use("/api/v1", postReactRouter);
 app.use("/api/v1", commentReactRouter);
+app.use("/api/v1", conversationsRouter);
+app.use("/api/v1", messageRouter);
 // //hosting
  app.use(express.static(path.join(__dirname, "./client/build")));
 

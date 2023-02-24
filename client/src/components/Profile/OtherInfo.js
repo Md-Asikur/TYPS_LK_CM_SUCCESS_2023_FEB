@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getUserDetails, logoutAction } from "../../actions/userAction";
+import {  getUserDetails } from "../../actions/userAction";
 import "./account.css";
 const OtherInfo = () => {
-  const navigate = useNavigate();
+ 
   const dispatch = useDispatch();
   const { user:currentUser } = useSelector((state) => state.user);
   const { userDetails } = useSelector((state) => state.userDetails);
@@ -16,13 +16,14 @@ const OtherInfo = () => {
         dispatch(getUserDetails(userId));
        
       }
-
+    
      
     }, [
       dispatch,
       userId,
      
     ]);
+  
   return (
     <>
       <div className="account">

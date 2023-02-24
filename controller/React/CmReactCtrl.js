@@ -33,7 +33,7 @@ export const reactPostComment = async (req, res) => {
 };
 export const getReactsComment = async (req, res) => {
   try {
-    const reactsArray = await CmReactModel.find({ postRef: req.params.id });
+    const reactsArray = await CmReactModel.find({ postRef: req.params.id }).populate("reactBy");
 
     /*
     const check1 = reacts.find(
@@ -83,6 +83,7 @@ export const getReactsComment = async (req, res) => {
     res.json({
       reacts,
       check: check?.react,
+      all:reactsArray,
       total: reactsArray.length,
       checkSaved: checkSaved ? true : false,
     });
@@ -94,7 +95,7 @@ export const getReactsComment = async (req, res) => {
 //unAuthorize get
 export const getReactsCommentUnauth = async (req, res) => {
   try {
-    const reactsArray = await CmReactModel.find({ postRef: req.params.id });
+    const reactsArray = await CmReactModel.find({ postRef: req.params.id }).populate("reactBy");
 
     /*
     const check1 = reacts.find(
@@ -138,9 +139,8 @@ export const getReactsCommentUnauth = async (req, res) => {
    
     res.json({
       reacts,
-      
+      all: reactsArray,
       total: reactsArray.length,
-      
     });
   } catch (error) {
     console.log(error);

@@ -32,7 +32,9 @@ export const reactPost = async (req, res) => {
 };
 export const getReacts = async (req, res) => {
   try {
-    const reactsArray = await ProductReact.find({ postRef: req.params.id });
+    const reactsArray = await ProductReact.find({ postRef: req.params.id }).populate(
+      "reactBy"
+    );
 
     
     const newReacts = reactsArray.reduce((group, react) => {
@@ -72,12 +74,13 @@ export const getReacts = async (req, res) => {
     const check = await ProductReact.findOne({
       postRef: req.params.id,
       reactBy: req.user.id,
-    });
+    })
     const user = await userModel.findById(req.user.id);
     const checkSaved = user?.savedPosts.find((x) => x.post.toString() === req.params.id);
     res.json({
       reacts,
       check: check?.react,
+      all:reactsArray,
       total: reactsArray.length,
       checkSaved: checkSaved ? true : false,
     });
@@ -88,7 +91,7 @@ export const getReacts = async (req, res) => {
 //un auth get
 export const getReactsUnauth = async (req, res) => {
   try {
-    const reactsArray = await ProductReact.find({ postRef: req.params.id });
+    const reactsArray = await ProductReact.find({ postRef: req.params.id }).populate("reactBy");
 
    
     const newReacts = reactsArray.reduce((group, react) => {
@@ -127,6 +130,7 @@ export const getReactsUnauth = async (req, res) => {
     res.json({
       reacts,
       total: reactsArray.length,
+      all: reactsArray,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -67,6 +67,14 @@ function Navbar() {
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item>
+                <Nav.Link eventKey="/messages">
+                  <Link to="/messages" style={{ color: "#000", textDecoration: "none" }}>
+                    {" "}
+                    Messages
+                  </Link>
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
                 <Nav.Link eventKey="/logout">
                   <a style={{ color: "#000", textDecoration: "none" }} onClick={logout}>
                     {" "}

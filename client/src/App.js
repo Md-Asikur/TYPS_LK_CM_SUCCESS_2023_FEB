@@ -6,6 +6,8 @@ import { getAllProducts } from "./actions/productAction";
 import { getallUsersAction, loadUser } from "./actions/userAction";
 import Home from "./components/Home/Home";
 import Navbar from "./components/Home/Nav";
+import Message from "./components/message/Message";
+import Messages from "./components/messages/Messages";
 import Account from "./components/Profile/Account";
 import OtherInfo from "./components/Profile/OtherInfo";
 import Login from "./components/user/Login";
@@ -61,6 +63,11 @@ function App() {
           {/* Category */}
           <Route path="/admin/category" element={<Category />} />
           {/* Category */}
+          {/* Message part */}
+
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/message/:id" element={<Message/>} />
+          {/* Message part */}
         </Routes>
       </BrowserRouter>
     </>

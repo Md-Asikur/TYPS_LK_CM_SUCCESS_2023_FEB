@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getProductDetails } from "../../actions/productAction";
@@ -12,6 +12,11 @@ import ProductCard from "./ProductCard";
 import Input from "../comments/Input";
 import ReactsPopup from "../react/ReactPopups";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import { Button } from "@mui/material";
+import Table from "react-bootstrap/esm/Table";
+
+import CloseIcon from "@mui/icons-material/Close";
+
 export const ProductDetails = () => {
    const comments = useSelector((state) => state.comments);
   const navigate=useNavigate()
@@ -19,8 +24,8 @@ export const ProductDetails = () => {
   const [loadings, setLoading] = useState(false);
   const dispatch = useDispatch();
    const { user } = useSelector((state) => state.user);
-  const { product } = useSelector((state) => state.productDetails);
-  const { product: products } = product;
+  const { product: products } = useSelector((state) => state.productDetails);
+  // const { product: products } = product;
   const procat = products?.category;
   const id = useParams().id;
   useEffect(() => {
@@ -32,7 +37,7 @@ export const ProductDetails = () => {
   const [reacts, setReacts] = useState();
   const [check, setCheck] = useState();
   const [total, setTotal] = useState(0);
-
+ const [allNameR, setAllNameR] = useState();
   const [checkSaved, setCheckSaved] = useState();
   useEffect(() => {
     if (user) {
@@ -40,10 +45,13 @@ export const ProductDetails = () => {
     } else {
       getReactsPostUnauth();
     }
-  }, [products, user]);
+   
+  }, [dispatch, products, user, allNameR, reacts]);
 
   const getReactsPost = async () => {
     const res = await getPostReacts(products?._id);
+    //console.log("reacsst", res.all);
+     setAllNameR(res.all);
     setReacts(res.reacts);
     setCheck(res.check);
     setTotal(res.total);
@@ -52,6 +60,7 @@ export const ProductDetails = () => {
   //un auth
   const getReactsPostUnauth = async () => {
     const res = await getPostReactsUnauth(products?._id);
+     setAllNameR(res?.all);
     setReacts(res.reacts);
 
     setTotal(res.total);
@@ -120,7 +129,24 @@ export const ProductDetails = () => {
     if (!products?._id) return;
     fetchComments(products?._id, num);
   };
+//reactions menus
+  const onClose = (e) => {
+    setShowMenu(false)
+  }
+  const menuref = useRef();
+  
 
+  useEffect(() => {
+    let handler = (e) => {
+      if (!menuref.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
   return (
     <>
       <div className="productDetails">
@@ -164,6 +190,7 @@ export const ProductDetails = () => {
       </div>
       {/* React */}
       <div
+        ref={menuref}
         className="post_infos"
         style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
@@ -178,9 +205,72 @@ export const ProductDetails = () => {
                 .map(
                   (react, i) =>
                     react.count > 0 && (
-                      <img src={`../../reacts/${react.react}.svg`} alt="" key={i} />
+                      <img
+                        onClick={() => {
+                          setShowMenu(!showMenu);
+                        }}
+                        src={`../../reacts/${react.react}.svg`}
+                        alt=""
+                        key={i}
+                      />
                     )
                 )}
+            {showMenu && (
+              <div className="rc_dropdown">
+                <Button
+                  onClick={onClose}
+                  variant="outlined"
+                  color="error"
+                  style={{ float: "right", margin: "2px 15px" }}
+                >
+                  {" "}
+                  <CloseIcon />
+                </Button>
+
+                <Table striped bordered hover variant="dark">
+                  <thead>
+                    <tr>
+                      <th>Avatar</th>
+                      <th>Name</th>
+                      <th>Reactions(7)</th>
+
+                      <th>Follow</th>
+                    </tr>
+                  </thead>
+
+                  {allNameR?.map((re, i) => {
+                    return (
+                      <>
+                        {/* <img src={re?.reactBy?.avatar?.url} />
+                              <p>{re?.reactBy?.name}</p>
+                              <img src={`../../reacts/${re.react}.svg`} alt="" key={i} /> */}
+                        <tbody>
+                          <tr>
+                            <td>
+                              <Link to={`/account/${re?.reactBy?._id}`}>
+                                <img
+                                  className="tdimg"
+                                  src={re?.reactBy?.avatar?.url}
+                                  style={{ height: "30px", width: "30px" }}
+                                />
+                              </Link>
+                            </td>
+                            <td>{re?.reactBy?.name}</td>
+                            <td>
+                              {" "}
+                              <img src={`../../reacts/${re.react}.svg`} alt="" key={i} />
+                            </td>
+                            <td>
+                              <Button variant="outlined">Follow</Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </>
+                    );
+                  })}
+                </Table>
+              </div>
+            )}
           </div>
           <div className="reacts_count_num">{total > 0 && total}</div>
           <div className="post_actions">
@@ -189,7 +279,6 @@ export const ProductDetails = () => {
               setVisible={setVisible}
               reactHandler={reactHandler}
             />
-
             <div
               className="post_action hover1"
               onMouseOver={() => {
@@ -236,7 +325,6 @@ export const ProductDetails = () => {
           `,
                 }}
               >
-                {/* {check ? check : "Like"} */}
                 {check ? check : ""}
               </span>
             </div>

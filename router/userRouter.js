@@ -12,5 +12,6 @@ router.route("/user/update/pic").put(isAuthenticatedUser, updateProfilePic);
 router.route("/update/password").put(isAuthenticatedUser, updatePassword);
 router.route("/admin/user/single-user/:id").get(isAuthenticatedUser, getSingleUser);
 router.route("/admin/user/delete/:id").delete(isAuthenticatedUser, deleteUser);
-  router.route("/admin/user/update/role/:id").put(isAuthenticatedUser, updateUserRole);
+router.route("/admin/user/update/role/:id").put(isAuthenticatedUser, updateUserRole);
+
 export default router;

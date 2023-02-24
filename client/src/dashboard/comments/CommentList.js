@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { getCommentReacts, getCommentReactsUnAuth, reactComment } from "../../actions/reactActions";
-
 import {
   replyComment,
   updateComment,
   deleteComment,
 } from "../../actions/commentAction";
-
 import Input from "./Input";
-
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactsPopup from "../react/ReactPopups";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-// interface IProps {
-//   comment: IComment
-//   showReply: IComment[]
-//   setShowReply: (showReply: IComment[]) => void
-// }
+import Table from "react-bootstrap/Table";
+import { Button } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import NewRequest from "../../components/message/newRequest";
 
 const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
   const [onReply, setOnReply] = useState(false);
@@ -33,7 +28,8 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
   const [reacts, setReacts] = useState();
   const [check, setCheck] = useState();
   const [total, setTotal] = useState(0);
-
+  const [allNameR, setAllNameR] = useState();
+   //console.log("cmre", allNameR);
   const [checkSaved, setCheckSaved] = useState();
   useEffect(() => {
     if (user) {
@@ -41,11 +37,12 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
     } else {
       getReactsPostUnauth()
     }
-  }, [comment,user]);
+  }, [comment,user,setAllNameR,reacts]);
 
   const getReactsPost = async () => {
     const res = await getCommentReacts(comment._id);
-    console.log(res)
+   
+    setAllNameR(res.all)
     setReacts(res.reacts);
     setCheck(res.check);
     setTotal(res.total);
@@ -54,15 +51,16 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
   //un auth
   const getReactsPostUnauth = async () => {
     const res = await getCommentReactsUnAuth(comment._id);
-   
+    
     setReacts(res.reacts);
     //setCheck(res.check);
+    setAllNameR(res.all);
     setTotal(res.total)
    
   };
 
   const reactHandler = async (type) => {
-    console.log("this",comment?._id);
+   
     reactComment(comment._id, type);
     if (check == type) {
       setCheck();
@@ -124,7 +122,44 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
     //dispatch(deleteComment(comment, auth.access_token));
     dispatch(deleteComment(comment));
   };
+//reactions menus
+  const onClose = (e) => {
+    setShowMenu(false)
+  }
+  const menuref = useRef();
+  
 
+  useEffect(() => {
+    let handler = (e) => {
+      if (!menuref.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
+  //converstaions create
+  const navigate=useNavigate();
+   const handleContact = async (order) => {
+     
+     
+     const id = user?._id + order?._id;
+     console.log(order?._id)
+
+     try {
+       const res = await NewRequest.get(`/conversations/single/${id}`);
+       navigate(`/message/${res.data.id}`);
+     } catch (err) {
+       if (err.response.status === 404) {
+         const res = await NewRequest.post(`/conversations`, {
+           to: order?._id,
+         });
+         navigate(`/message/${res.data?.id}`);
+       }
+     }
+   };
   const Nav = (comment) => {
     return (
       <div style={{ float: "right" }}>
@@ -197,7 +232,7 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
             userId={user?._id}
             allComment={comment}
           /> */}
-          <div className="post_infos">
+          <div className="post_infos" ref={menuref}>
             <div className="reacts_count">
               <div className="reacts_count_imgs">
                 {reacts &&
@@ -209,15 +244,91 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
                     .map(
                       (react, i) =>
                         react.count > 0 && (
-                          <img
-                            src={`../../reacts/${react.react}.svg`}
-                            alt=""
-                            key={i}
-                          />
+                          <>
+                            <img
+                              onClick={() => {
+                                setShowMenu(!showMenu);
+                              }}
+                              src={`../../reacts/${react.react}.svg`}
+                              alt=""
+                              key={i}
+                            />
+                          </>
                         )
                     )}
+                {showMenu && (
+                  <div className="rc_dropdown">
+                    <Button
+                      onClick={onClose}
+                      variant="outlined"
+                      color="error"
+                      style={{ float: "right", margin: "2px 15px" }}
+                    >
+                      {" "}
+                      <CloseIcon />
+                    </Button>
+
+                    <Table striped bordered hover variant="dark">
+                      <thead>
+                        <tr>
+                          <th>Avatar</th>
+                          <th>Name</th>
+                          <th>Reactions(7)</th>
+
+                          <th>Message</th>
+                        </tr>
+                      </thead>
+
+                      {allNameR?.map((re, i) => {
+                        return (
+                          <>
+                            {/* <img src={re?.reactBy?.avatar?.url} />
+                              <p>{re?.reactBy?.name}</p>
+                              <img src={`../../reacts/${re.react}.svg`} alt="" key={i} /> */}
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <Link to={`/account/${re?.reactBy?._id}`}>
+                                    <img
+                                      className="tdimg"
+                                      src={re?.reactBy?.avatar?.url}
+                                      style={{ height: "30px", width: "30px" }}
+                                    />
+                                  </Link>
+                                </td>
+                                <td>{re?.reactBy?.name}</td>
+                                <td>
+                                  {" "}
+                                  <img
+                                    src={`../../reacts/${re.react}.svg`}
+                                    alt=""
+                                    key={i}
+                                  />
+                                </td>
+                                <td>
+                                
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleContact(re?.reactBy)}
+                                  >
+                                    Message
+                                  </Button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </>
+                        );
+                      })}
+                    </Table>
+                  </div>
+                )}
               </div>
-                <div className="reacts_count_num" style={{fontWeight:"600",fontSize:"20px"}}>{total > 0 && total}</div>
+              <div
+                className="reacts_count_num"
+                style={{ fontWeight: "600", fontSize: "20px" }}
+              >
+                {total > 0 && total}
+              </div>
               <div className="post_actions">
                 <ReactsPopup
                   visible={visible}
@@ -247,7 +358,7 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
                       style={{ width: "18px" }}
                     />
                   ) : (
-                   user && <ThumbUpOffAltIcon style={{ display: "block" }} />
+                    user && <ThumbUpOffAltIcon style={{ display: "block" }} />
                   )}
                   <span
                     style={{

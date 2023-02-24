@@ -1,13 +1,14 @@
 import { createStore, applyMiddleware, combineReducers } from "redux"
 import thunk from "redux-thunk"
 import {composeWithDevTools } from "redux-devtools-extension"
-import { allusersReducer, clearHistory, updateUserReducer, userDetailsReducer, userReducer } from "./reducers/userReducer"
+import { allusersReducer, clearHistory, profileReducer, updateUserReducer, userDetailsReducer, userReducer } from "./reducers/userReducer"
 import { createProductReducer, getAllProductReducer, productDetailsReducer, updDelproductReducer } from "./reducers/productReducer"
 import categoryReducer from "./reducers/categoryReducer"
 import commentReducer from "./reducers/commentReducer"
 const middleware = [thunk]
 const reducer = combineReducers({
   user: userReducer,
+
   allProducts: getAllProductReducer,
   category: categoryReducer,
   comments: commentReducer,

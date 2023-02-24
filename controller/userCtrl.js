@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import sendToken from "../utils/getGwtToken.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import cloudinary from "cloudinary"
+import { Product } from "../Model/ProductModel.js";
  export const register = async(req,res,next) => {
    try {
      const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar,{
