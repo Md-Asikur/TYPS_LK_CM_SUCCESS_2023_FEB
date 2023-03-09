@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 //   body: string
 //   setBody: (value: string) => void
 // }
-import Camera from "@mui/icons-material/CameraAltOutlined"
+import Camera from "@mui/icons-material/AddAPhotoOutlined"
 const LiteQuill = ({body, setBody,file,setFile,setShowFile}) => {
 
   const modules = { toolbar: { container }}
@@ -37,15 +37,17 @@ const LiteQuill = ({body, setBody,file,setFile,setShowFile}) => {
         onChange={(e) => setBody(e)}
         value={body}
       />
-      <input
-        type="file"
-        name="image"
-        onChange={registerDataChange}
-        id="commentFileInput"
-      />
-      <label for="commentFileInput" id="label">
-        <Camera /> Choose File
-      </label>
+
+      <button type="" className="upload-file-btn">
+        <Camera />
+        <span>Upload File</span>
+        <input
+          type="file"
+          name="image"
+          onChange={registerDataChange}
+          id="commentFileInput"
+        />
+      </button>
     </div>
   );
 }
@@ -53,7 +55,7 @@ const LiteQuill = ({body, setBody,file,setFile,setShowFile}) => {
 let container = [
   [{ 'font': [] }],
   ['bold', 'italic', 'underline', 'strike'],        
-  ['blockquote', 'code-block', 'link','image'],
+  ['blockquote', 'code-block', 'link'],
   [{ 'color': [] }, { 'background': [] }],          
   [{ 'script': 'sub'}, { 'script': 'super' }]
 ]

@@ -12,10 +12,10 @@ code {
     monospace;
 }
 
-#commentFileInput{
+/* #commentFileInput{
   display: none;
  
-}
+} */
 #label{
   background-color: rgb(241, 243, 245);
   color: #080101;
@@ -30,4 +30,41 @@ code {
 }
 .showFileCmBtn{
   position: absolute;
+}
+/* ::-webkit-file-upload-button {
+            cursor: pointer;
+            margin-top: 25px;
+            display: inline-block;
+            padding: 6px 20px;
+          
+            transition: all 1s ease;
+            color: rgb(7, 91, 216);
+            text-transform: capitalize;
+            font-size: 15px;
+            z-index: 1;
+            position: relative;
+            border-radius: 25px;
+            background-color: rgb(255, 254, 255);
+            border: 1px solid rgb(12, 10, 10);
+} */
+.upload-file-btn{
+position: relative;
+padding: 5px 35px;
+font-size: 18px;
+line-height: 1.5;
+border-radius: 5px;
+background-color: #ecec05;
+font-size: 15px;
+color: #4e4e4e;
+border: 0;
+overflow: hidden;
+margin: 10px;
+}
+.upload-file-btn input[type="file"]{
+  cursor: pointer;
+position: absolute;
+left: 0%;
+top: 0%;
+transform: scale(5);
+opacity: 0;
 }
