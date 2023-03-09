@@ -15,6 +15,8 @@ import { Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import NewRequest from "../../components/message/newRequest";
 
+import ModalToggle from "./ModalToggle";
+
 const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
   const [onReply, setOnReply] = useState(false);
   //const { auth } = useSelector((state: RootStore) => state)
@@ -27,6 +29,7 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [reacts, setReacts] = useState();
   const [check, setCheck] = useState();
+   const [Modals, setModal] = useState(false);
   const [total, setTotal] = useState(0);
   const [allNameR, setAllNameR] = useState();
    //console.log("cmre", allNameR);
@@ -37,7 +40,7 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
     } else {
       getReactsPostUnauth()
     }
-  }, [comment,user,setAllNameR,reacts]);
+  }, [comment,user,setAllNameR]); // dependence reacts for timely update
 
   const getReactsPost = async () => {
     const res = await getCommentReacts(comment._id);
@@ -86,12 +89,13 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
     }
   };
   //react part end
-  const handleReply = (body) => {
+  const handleReply = (body,file) => {
     if (!user) return;
 
     const data = {
       user: user,
       blog_id: comment.blog_id,
+      image:file,
       blog_user_id: comment.blog_user_id,
       content: body,
       replyCM: [],
@@ -145,8 +149,8 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
    const handleContact = async (order) => {
      
      
-     const id = user?._id + order?._id;
-     console.log(order?._id)
+     const id = (user?._id + order?._id) || (order?._id + user?._id)
+     
 
      try {
        const res = await NewRequest.get(`/conversations/single/${id}`);
@@ -154,12 +158,24 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
      } catch (err) {
        if (err.response.status === 404) {
          const res = await NewRequest.post(`/conversations`, {
-           to: order?._id,
+           to: user?.isActiveUser ? user?._id : order?._id,
          });
-         navigate(`/message/${res.data?.id}`);
+         navigate(`/message/${res.data.id}`);
        }
      }
    };
+  const ref = React.useRef();
+  React.useEffect(() => {
+    let handler = (e) => {
+      if (!ref.current.contains(e.target)) {
+        setModal(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
   const Nav = (comment) => {
     return (
       <div style={{ float: "right" }}>
@@ -182,7 +198,7 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
       {edit ? (
         <Input callback={handleUpdate} edit={edit} setEdit={setEdit} />
       ) : (
-        <div className="comment_box">
+        <div className="comment_box" ref={ref}>
           <div
             className="p-2"
             dangerouslySetInnerHTML={{
@@ -190,7 +206,17 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
             }}
             style={{ display: "flex" }}
           />
-
+          {comment?.image && (
+            <div style={{ height: "200px", width: "200px" }}>
+              <img
+                onClick={() => setModal(!Modals)}
+                src={comment.image}
+                alt=""
+                style={{ width: "100%", height: "100%" }}
+              />
+            </div>
+          )}
+          {Modals && <ModalToggle comment={comment} setModal={setModal} />}
           <div className="d-flex justify-content-between p-2">
             <small style={{ cursor: "pointer" }} onClick={() => setOnReply(!onReply)}>
               {onReply ? "- Cancel -" : "- Reply -"}
@@ -306,7 +332,6 @@ const CommentList = ({ children, comment, showReply, setShowReply, match }) => {
                                   />
                                 </td>
                                 <td>
-                                
                                   <Button
                                     variant="outlined"
                                     onClick={() => handleContact(re?.reactBy)}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
-
+const { ObjectId } = mongoose.Schema;
 const ConversationSchema = new Schema(
   {
     id: {
@@ -27,6 +27,11 @@ const ConversationSchema = new Schema(
     lastMessage: {
       type: String,
       required: false,
+    },
+    user: {
+      type:ObjectId,
+      ref: "user",
+      required:true
     },
   },
   {

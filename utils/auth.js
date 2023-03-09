@@ -17,8 +17,9 @@ export const isAuthenticatedUser = async (req, res, next) => {
 
   req.userId = decodedData.id;
   req.isActiveUser = req.user.isActiveUser;
-   //  console.log(req.isActiveUser);
-  next();
+  req.avatar = req.user.avatar.url
+    //  console.log(req.isActiveUser);
+    next();
   //test
   // jwt.verify(token, process.env.JWT_SECRET, async (err, payload) => {
   //   if (err) return next(ErrorHander(403, "Token is not valid!"));

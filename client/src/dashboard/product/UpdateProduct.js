@@ -23,6 +23,7 @@ function UpdateProduct() {
     price: "",
     category: "",
     stock: "",
+    quantity:""
   });
     const productId = useParams().id;
   const [name, setName] = useState("");
@@ -30,6 +31,7 @@ function UpdateProduct() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState(0);
+   const [quantity, setQuantity] = useState(0);
   const [images, setImages] = useState([]);
   const [oldImages, setOldImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
@@ -52,6 +54,7 @@ function UpdateProduct() {
     formData.set("price", price);
     formData.set("category", category);
     formData.set("stock", stock);
+     formData.set("quantity", quantity);
 
     images.forEach((image) => {
       formData.append("images", image);
@@ -86,12 +89,13 @@ setOldImages([]);
       dispatch(getProductDetails(productId));
       if (productId) {
         console.log(products);
-        setName(products?.product?.name);
-        setDescription(products?.product?.description);
-        setPrice(products?.product?.price);
-        setCategory(products?.product?.category);
-        setStock(products?.product?.stock);
-        setOldImages(products?.product?.images);
+        setName(products?.name);
+        setDescription(products?.description);
+        setPrice(products?.price);
+        setCategory(products?.category);
+        setStock(products?.stock);
+        setQuantity(products?.quantity);
+        setOldImages(products?.images);
       }
 
       if (error) {
@@ -103,8 +107,8 @@ setOldImages([]);
         toast.success("Product Updated Successfully!");
 
         navigate("/admin/all-products");
-          dispatch({ type: PRODUCT_CLEAR_ERRORS });
-          dispatch(getAllProducts())
+        dispatch({ type: PRODUCT_CLEAR_ERRORS });
+        dispatch(getAllProducts());
       }
     }, [
       isAuthenticated,
@@ -114,11 +118,12 @@ setOldImages([]);
       toast,
       dispatch,
       productId,
-      products?.product?.category,
-      products?.product?.name,
-      products?.product?.description,
-      products?.product?.price,
-      products?.product?.stock,
+      products?.category,
+      products?.name,
+      products?.description,
+      products?.price,
+      products?.stock,
+      products?.quantity,
     ]);
   return (
     <>
@@ -170,6 +175,17 @@ setOldImages([]);
               name="stock"
               onChange={(e) => setStock(e.target.value)}
               value={stock}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Quantity</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter Quantity"
+              name="quantity"
+              onChange={(e) => setQuantity(e.target.value)}
+              value={quantity}
               required
             />
           </Form.Group>

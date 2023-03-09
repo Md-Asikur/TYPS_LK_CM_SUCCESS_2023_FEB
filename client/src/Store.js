@@ -5,10 +5,11 @@ import { allusersReducer, clearHistory, profileReducer, updateUserReducer, userD
 import { createProductReducer, getAllProductReducer, productDetailsReducer, updDelproductReducer } from "./reducers/productReducer"
 import categoryReducer from "./reducers/categoryReducer"
 import commentReducer from "./reducers/commentReducer"
+import { cartReducer } from "./reducers/cartReducer"
 const middleware = [thunk]
 const reducer = combineReducers({
   user: userReducer,
-
+  cart:cartReducer,
   allProducts: getAllProductReducer,
   category: categoryReducer,
   comments: commentReducer,
@@ -22,8 +23,20 @@ const reducer = combineReducers({
   productDetails: productDetailsReducer,
   updDelProduct: updDelproductReducer,
 });
+let initialState = {
+  cart: {
+    cartItems: localStorage.getItem("cartItems")
+      ? JSON.parse(localStorage.getItem("cartItems"))
+      : [],
+    shippingInfo: localStorage.getItem("shippingInfo")
+      ? JSON.parse(localStorage.getItem("shippingInfo"))
+      : {},
+  },
+};
+
 const store = createStore(
-    reducer,
+  reducer,
+  initialState,
     composeWithDevTools(applyMiddleware(...middleware))
 )
 export default store

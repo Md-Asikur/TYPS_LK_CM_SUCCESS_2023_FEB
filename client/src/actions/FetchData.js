@@ -1,7 +1,9 @@
 import axios from "axios";
 
 export const postAPI = async (url, post, token) => {
-  const res = await axios.post(`/api/v1/${url}`, post, {
+  const config={headers:{"Content-Type":"multipart/form-data"}}
+  //const config = { headers: { "Content-Type": "application/json" } };
+  const res = await axios.post(`/api/v1/${url}`, post,config, {
     headers: { Authorization: token },
   });
 

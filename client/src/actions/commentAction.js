@@ -1,6 +1,7 @@
 
 
 
+import axios from 'axios';
 import { 
   
   GET_COMMENTS,
@@ -62,13 +63,12 @@ export const getComments = (
 }
 
 
-export const replyComment = (
-  data
-) => async(dispatch) => {
-  
+export const replyComment = (data) => async (dispatch) => {
   try {
-  const res=  await postAPI('reply_comment', data)
-//console.log("repdta",res)
+     const config = { headers: { "Content-Type": "application/json" } };
+
+    const res = await axios.post(`/api/v1/reply_comment`, data,config);
+    // console.log("repdta",res)
     dispatch({
       type: REPLY_COMMENT,
       payload: {
@@ -77,12 +77,10 @@ export const replyComment = (
         reply_user: data.reply_user,
       },
     });
-    
   } catch (err) {
-    dispatch({ type: ALERT, payload: { errors: err.response.data.msg } })
+    dispatch({ type: ALERT, payload: { errors: err.response.data.msg } });
   }
-}
-
+};
 
 export const updateComment = (
   data

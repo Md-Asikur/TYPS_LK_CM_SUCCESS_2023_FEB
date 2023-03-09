@@ -1,7 +1,7 @@
 import Comments from "../Model/commentModel.js"
 
 import mongoose from "mongoose"
-
+import cloudinary from "cloudinary"
 
 const Pagination = (req) => {
   let page = Number(req.query.page) * 1 || 1;
@@ -16,10 +16,30 @@ const commentCtrl = {
     if (!req.user) return res.status(400).json({ msg: "invalid Authentication." });
 
     try {
-      const { content, blog_id, blog_user_id } = req.body;
+      // for multiple upload and push array
+      //  if (req.body.image) {
+      //    const myCloud = await cloudinary.v2.uploader.upload(req.body.image, {
+      //      folder: "comment_images",
+      //    });
+      //    imagesLinks.push({
+      //      url: myCloud.secure_url,
+      //    });
+      //  }
+
+      //// for single upload and set string
+      let { content, blog_id, blog_user_id, image } = req.body;
+
+      if (image) {
+        const myCloud = await cloudinary.v2.uploader.upload(image, {
+          folder: "comment_images",
+        });
+        image = myCloud.secure_url;
+      }
 
       const newComment = new Comments({
         user: req.user._id,
+        image, // for single upload and set string
+        // image:imagesLinks, // for multiple upload and push array
         content,
         blog_id,
         blog_user_id,
@@ -28,20 +48,22 @@ const commentCtrl = {
       const data = {
         ...newComment,
         user: req.user,
+
         createdAt: new Date().toISOString(),
       };
 
-    //   await NotificationModel.create({
-    //     subject: `${req.user.name} comment on your product`,
-    //     user: req.user,
-    //     // content:content
-    //     prid: blog_id,
-    //   });
+      //   await NotificationModel.create({
+      //     subject: `${req.user.name} comment on your product`,
+      //     user: req.user,
+      //     // content:content
+      //     prid: blog_id,
+      //   });
 
       await newComment.save();
 
       return res.json(newComment);
     } catch (err) {
+      console.log(err);
       return res.status(500).json({ msg: err.message });
     }
   },
@@ -150,10 +172,17 @@ const commentCtrl = {
     if (!req.user) return res.status(400).json({ msg: "invalid Authentication." });
 
     try {
-      const { content, blog_id, blog_user_id, comment_root, reply_user } = req.body;
+      let { content, blog_id, blog_user_id, comment_root, reply_user, image } = req.body;
+      if (image) {
+        const myCloud = await cloudinary.v2.uploader.upload(image, {
+          folder: "comment_images",
+        });
+        image = myCloud.secure_url;
+      }
 
       const newComment = new Comments({
         user: req.user._id,
+        image,
         content,
         blog_id,
         blog_user_id,
@@ -171,19 +200,20 @@ const commentCtrl = {
       const data = {
         ...newComment,
         user: req.user,
-        reply_user: reply_user,
+        reply_user: reply_user._id,
         createdAt: new Date().toISOString(),
       };
-    //   await NotificationModel.create({
-    //     subject: `${req.user.name} reply comment on your product`,
-    //     user: req.user,
-    //     prid: blog_id,
-    //   });
+      //   await NotificationModel.create({
+      //     subject: `${req.user.name} reply comment on your product`,
+      //     user: req.user,
+      //     prid: blog_id,
+      //   });
 
       await newComment.save();
 
       return res.json(newComment);
     } catch (err) {
+      console.log(err);
       return res.status(500).json({ msg: err.message });
     }
   },

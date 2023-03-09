@@ -16,14 +16,17 @@ import { Button } from "@mui/material";
 import Table from "react-bootstrap/esm/Table";
 
 import CloseIcon from "@mui/icons-material/Close";
+import NewRequest from "../../components/message/newRequest";
+import { addItemsToCart } from "../../actions/cartAction";
+import { toast } from "react-toastify";
 
 export const ProductDetails = () => {
-   const comments = useSelector((state) => state.comments);
-  const navigate=useNavigate()
+  const comments = useSelector((state) => state.comments);
+  const navigate = useNavigate();
   const [showComments, setShowComments] = useState([]);
   const [loadings, setLoading] = useState(false);
   const dispatch = useDispatch();
-   const { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const { product: products } = useSelector((state) => state.productDetails);
   // const { product: products } = product;
   const procat = products?.category;
@@ -32,12 +35,13 @@ export const ProductDetails = () => {
     dispatch(getProductDetails(id));
   }, []);
   //react post
+  const [quantity, setQuantity] = useState(1);
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [reacts, setReacts] = useState();
   const [check, setCheck] = useState();
   const [total, setTotal] = useState(0);
- const [allNameR, setAllNameR] = useState();
+  const [allNameR, setAllNameR] = useState();
   const [checkSaved, setCheckSaved] = useState();
   useEffect(() => {
     if (user) {
@@ -45,13 +49,12 @@ export const ProductDetails = () => {
     } else {
       getReactsPostUnauth();
     }
-   
-  }, [dispatch, products, user, allNameR, reacts]);
+  }, [dispatch, products, user]);
 
   const getReactsPost = async () => {
     const res = await getPostReacts(products?._id);
     //console.log("reacsst", res.all);
-     setAllNameR(res.all);
+    setAllNameR(res.all);
     setReacts(res.reacts);
     setCheck(res.check);
     setTotal(res.total);
@@ -60,7 +63,7 @@ export const ProductDetails = () => {
   //un auth
   const getReactsPostUnauth = async () => {
     const res = await getPostReactsUnauth(products?._id);
-     setAllNameR(res?.all);
+    setAllNameR(res?.all);
     setReacts(res.reacts);
 
     setTotal(res.total);
@@ -91,11 +94,12 @@ export const ProductDetails = () => {
     }
   };
   //react part end
-  const handleComment = (body) => {
+  const handleComment = (body,file) => {
     if (!user) return;
 
     const data = {
       content: body,
+      image:file,
       user: user,
       blog_id: products?._id,
       blog_user_id: products?.user,
@@ -112,7 +116,7 @@ export const ProductDetails = () => {
     //if (comments?.data?.length === 0) return;
     setShowComments(comments?.data);
   }, [comments?.data]);
-  //console.log(showComments);
+  console.log(showComments);
   const fetchComments = useCallback(async (id, num = 1) => {
     setLoading(true);
     dispatch(getComments(id, num));
@@ -129,12 +133,11 @@ export const ProductDetails = () => {
     if (!products?._id) return;
     fetchComments(products?._id, num);
   };
-//reactions menus
+  //reactions menus
   const onClose = (e) => {
-    setShowMenu(false)
-  }
+    setShowMenu(false);
+  };
   const menuref = useRef();
-  
 
   useEffect(() => {
     let handler = (e) => {
@@ -147,6 +150,45 @@ export const ProductDetails = () => {
       document.removeEventListener("mousedown", handler);
     };
   });
+  //converstaions create
+
+  const handleContact = async (order) => {
+    const id = user?._id + order?._id || order?._id + user?._id;
+
+    try {
+      const res = await NewRequest.get(`/conversations/single/${id}`);
+      navigate(`/message/${res.data.id}`);
+    } catch (err) {
+      if (err.response.status === 404) {
+        const res = await NewRequest.post(`/conversations`, {
+          to: user?.isActiveUser ? user?._id : order?._id,
+        });
+        navigate(`/message/${res.data?.id}`);
+      }
+    }
+  };
+  //cart
+  //react part end
+  const increaseQuantity = () => {
+    if (products?.stock <= quantity) return;
+
+    const qty = quantity + 1;
+    setQuantity(qty);
+  };
+
+  const decreaseQuantity = () => {
+    if (1 >= quantity) return;
+
+    const qty = quantity - 1;
+    setQuantity(qty);
+  };
+
+  const addToCartHandler = () => {
+    dispatch(addItemsToCart(id, quantity));
+    toast.success("Item Added To Cart");
+    navigate("/cart")
+  };
+
   return (
     <>
       <div className="productDetails">
@@ -186,6 +228,19 @@ export const ProductDetails = () => {
             <b>product-price:</b>
             {products?.price}
           </h4>
+          <div className="detailsBlock-3-1">
+            <div className="detailsBlock-3-1-1">
+              <button onClick={decreaseQuantity}>-</button>
+              <input readOnly type="number" value={quantity} />
+              <button onClick={increaseQuantity}>+</button>
+            </div>
+            <button
+              disabled={products?.stock < 1 ? true : false}
+              onClick={addToCartHandler}
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
       {/* React */}
@@ -234,7 +289,7 @@ export const ProductDetails = () => {
                       <th>Name</th>
                       <th>Reactions(7)</th>
 
-                      <th>Follow</th>
+                      <th>Send Messages</th>
                     </tr>
                   </thead>
 
@@ -261,7 +316,12 @@ export const ProductDetails = () => {
                               <img src={`../../reacts/${re.react}.svg`} alt="" key={i} />
                             </td>
                             <td>
-                              <Button variant="outlined">Follow</Button>
+                              <Button
+                                variant="outlined"
+                                onClick={() => handleContact(re?.reactBy)}
+                              >
+                                Send Message
+                              </Button>
                             </td>
                           </tr>
                         </tbody>
@@ -331,46 +391,7 @@ export const ProductDetails = () => {
           </div>
         </div>
       </div>
-      {/*<List.Item
-            actions={[<LikeDislikes product productId={productId} userId={user?._id} />]}
-          ></List.Item>
-          {/*
-          <Comment
-            postId={product._id}
-            CommentLists={CommentLists}
-            refreshFunction={updateComment}
-          /> */}
-      {/* {product.reviews && product.reviews[0] ? (
-            <div className="reviews">
-              {product.reviews &&
-                product.reviews.map((review) => (
-                  <ReviewCard key={review._id} review={review} />
-                ))}
-            </div>
-          ) : (
-            <p className="noReviews">No Reviews Yet</p>
-            )} */}
-      {/* <div>
-        <h1
-          style={{
-            textAlign: "center",
-            fontSize: "35px",
-            fontWeight: "600",
-            fontFamily: "cursive",
-          }}
-        >
-          Related Products
-        </h1>
-        <div style={{ display: "flex" }}>
-          {products?.map((products) => {
-            return (
-              products?.category === procat && (
-                <ProductCard key={products?._id} product={products} />
-              )
-            );
-          })}
-        </div>
-      </div> */}
+      
       <div style={{ padding: "13px" }}>
         {user ? (
           <Input callback={handleComment} />

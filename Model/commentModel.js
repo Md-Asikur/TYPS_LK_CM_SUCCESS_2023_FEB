@@ -1,4 +1,4 @@
-import mongoose from"mongoose"
+import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
   {
@@ -6,6 +6,13 @@ const commentSchema = new mongoose.Schema(
     blog_id: mongoose.Types.ObjectId,
     blog_user_id: mongoose.Types.ObjectId,
     content: { type: String, required: true },
+    // image: [{
+    //   url: { type: String, required: false }
+    // }],
+    image: {
+      type: String,
+    },
+
     replyCM: [{ type: mongoose.Types.ObjectId, ref: "comment" }],
     reply_user: { type: mongoose.Types.ObjectId, ref: "user" },
     comment_root: { type: mongoose.Types.ObjectId, ref: "comment" },
@@ -15,5 +22,5 @@ const commentSchema = new mongoose.Schema(
   }
 );
 
-const commentModel= mongoose.model("comment", commentSchema);
+const commentModel = mongoose.model("comment", commentSchema);
 export default commentModel;

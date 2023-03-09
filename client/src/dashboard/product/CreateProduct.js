@@ -22,6 +22,7 @@ function CreateProduct() {
     price: "",
     category: "",
     stock: "",
+    quantity:""
   });
 
   const [images, setImages] = useState([]);
@@ -36,7 +37,7 @@ function CreateProduct() {
   //   "Camera",
   //   "SmartPhones",
   // ];
-  const { name, description, price, stock } = product;
+  const { name, description, price, stock,quantity } = product;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -46,6 +47,8 @@ function CreateProduct() {
     formData.set("price", price);
     formData.set("category", category);
     formData.set("stock", stock);
+     formData.set("quantity", quantity);
+
 
     images.forEach((image) => {
       formData.append("images", image);
@@ -142,6 +145,17 @@ function CreateProduct() {
               required
             />
           </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Quantity</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter Quantity"
+              name="quantity"
+              onChange={registerDataChange}
+              value={quantity}
+              required
+            />
+          </Form.Group>
           <Form.Group>
             <Form.Label></Form.Label>
             <select onChange={(e) => setCategory(e.target.value)} required>
@@ -179,7 +193,7 @@ function CreateProduct() {
               accept="image/*"
               onChange={registerDataChange}
               multiple
-             required
+              required
             />
           </Form.Group>
 

@@ -7,6 +7,7 @@ export const createMessage = async (req, res, next) => {
     conversationId: req.body.conversationId,
     userId: req.userId,
     desc: req.body.desc,
+    user: req.avatar,
   });
   try {
     const savedMessage = await newMessage.save();
@@ -17,6 +18,7 @@ export const createMessage = async (req, res, next) => {
           readBySender: req. isActiveUser,
           readByReceiver: !req. isActiveUser,
           lastMessage: req.body.desc,
+         
         },
       },
       { new: true }
@@ -29,7 +31,7 @@ export const createMessage = async (req, res, next) => {
 };
 export const getMessages = async (req, res, next) => {
   try {
-    const messages = await Message.find({ conversationId: req.params.id });
+    const messages = await Message.find({ conversationId: req.params.id }).populate("user");
     res.status(200).send(messages);
   } catch (err) {
     next(err);

@@ -20,10 +20,10 @@ const app = express()
 
 app.use(error);
 app.use(express())
-app.use(express.json());
+app.use(express.json({ limit: "500mb" }));
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false}));
-app.use(fileupload())
+app.use(fileupload());
 app.use(
   cors({
     origin: "http://localhost:3000" || "https://sore-hare-cloak.cyclic.app",

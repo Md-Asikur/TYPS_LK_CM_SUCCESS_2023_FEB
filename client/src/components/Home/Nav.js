@@ -8,6 +8,7 @@ function Navbar() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
    useEffect(() => {
     
    }, [isAuthenticated]);
@@ -71,6 +72,33 @@ function Navbar() {
                   <Link to="/messages" style={{ color: "#000", textDecoration: "none" }}>
                     {" "}
                     Messages
+                  </Link>
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="/cart">
+                  <Link
+                    to="/cart"
+                    style={{
+                      color: "#000",
+                      textDecoration: "none",
+                      position: "relative",
+                    }}
+                  >
+                    {" "}
+                    Cart
+                    {cartItems?.length > 0 && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: "-10px",
+                          right: "-14px",
+                          color: "white",
+                        }}
+                      >
+                        {cartItems?.length}
+                      </span>
+                    )}
                   </Link>
                 </Nav.Link>
               </Nav.Item>

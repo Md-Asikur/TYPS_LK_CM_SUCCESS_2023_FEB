@@ -16,6 +16,7 @@ import UpdatePassword from "./components/user/UpdatePassword";
 import UpdateRole from "./components/user/UpdateRole";
 import UpdateUser from "./components/user/UpdateUser";
 import AllUsers from "./dashboard/AllUsers";
+import Cart from "./dashboard/cart/Cart";
 import AllCategory from "./dashboard/Category";
 import Category from "./dashboard/category/Category.js";
 import Dashboard from "./dashboard/Dashboard";
@@ -68,6 +69,8 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/message/:id" element={<Message/>} />
           {/* Message part */}
+          {/* cart */}
+          <Route path="/cart" element={<Cart/>}/>
         </Routes>
       </BrowserRouter>
     </>

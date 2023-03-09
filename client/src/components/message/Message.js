@@ -15,6 +15,7 @@ const Message = () => {
     queryKey: ["message"],
     queryFn: () =>
       NewRequest.get(`/message/${id}`).then((res) => {
+        console.log(res.data)
         return res.data;
       }),
   });
@@ -41,7 +42,7 @@ const Message = () => {
     <div className="message">
       <div className="container">
         <span className="breadcrumbs">
-          <Link to="/message">Message</Link> / John Doe /
+          <Link to="/message">Message</Link> /{user?.name} /
         </span>
         {isLoading ? (
           "loading"
@@ -51,10 +52,12 @@ const Message = () => {
           <div className="messages">
             {data.map((m) => (
               <div className={m.userId === user?._id ? "owner item" : "item"} key={m._id}>
-                <img
-                  src={user?.avatar?.url}
-                  alt=""
-                />
+                {m.userId === user?._id ? (
+                  <img src={user?.avatar?.url} alt="" />
+                ) : (
+                  <img src={m.user} alt="other user" />
+                )}
+
                 <p>{m.desc}</p>
               </div>
             ))}
